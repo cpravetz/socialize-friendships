@@ -1,5 +1,5 @@
 /* eslint-disable import/no-unresolved */
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from 'meteor/aldeed:simple-schema';
 /* eslint-enable import/no-unresolved */
 
 export default ({ Meteor, Mongo, BaseModel, ServerTime }) => {
@@ -58,7 +58,6 @@ export default ({ Meteor, Mongo, BaseModel, ServerTime }) => {
     FriendsCollection.attachSchema(new SimpleSchema({
         userId: {
             type: String,
-            regEx: SimpleSchema.RegEx.Id,
             autoValue() {
                 if (this.isInsert) {
                     if (!this.isSet || !this.isFromTrustedCode) {
@@ -72,7 +71,6 @@ export default ({ Meteor, Mongo, BaseModel, ServerTime }) => {
         },
         friendId: {
             type: String,
-            regEx: SimpleSchema.RegEx.Id,
             index: 1,
             denyUpdate: true,
         },
