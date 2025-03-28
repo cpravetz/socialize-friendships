@@ -60,9 +60,9 @@ import '@socialize/friendships';
 ```
 
 ```javascript
-Meteor.users.findOne({username:'copleykj'}).requestFriendship();
+Meteor.users.findOneAsync({username:'copleykj'}).requestFriendship();
 
-Meteor.users.findOne({username:'storytellercz'}).acceptFriendshipRequest();
+Meteor.users.findOneAsync({username:'storytellercz'}).acceptFriendshipRequest();
 
 Meteor.user().requests().fetch(); // fetch all the requests from other users
 Meteor.user().pendingRequests().fetch() // fetch all requests to other users

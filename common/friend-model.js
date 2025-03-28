@@ -7,7 +7,7 @@ export default ({ Meteor, Mongo, BaseModel, ServerTime }) => {
 
     if (FriendsCollection.configureRedisOplog) {
         FriendsCollection.configureRedisOplog({
-            mutation(options, { selector, doc }) {
+            async mutation(options, { selector, doc }) {
                 const namespaces = [];
                 if (doc) {
                     namespaces.push(doc.userId, doc.friendId);
@@ -15,7 +15,7 @@ export default ({ Meteor, Mongo, BaseModel, ServerTime }) => {
                     const { _id, userId, friendId } = selector;
 
                     if (_id) {
-                        const friend = FriendsCollection.findOne({ _id: selector._id }, { fields: { userId: 1, friendId: 1 } });
+                        const friend = await FriendsCollection.findOneAsync({ _id: selector._id }, { fields: { userId: 1, friendId: 1 } });
                         if (friend) {
                             namespaces.push(friend.userId, friend.friendId);
                         }
@@ -47,8 +47,8 @@ export default ({ Meteor, Mongo, BaseModel, ServerTime }) => {
         * @function user
         * @memberof Friend
         */
-        user() {
-            return Meteor.users.findOne({ _id: this.friendId });
+        async user() {
+            return await Meteor.users.findOneAsync({ _id: this.friendId });
         }
     }
 

@@ -26,12 +26,12 @@ export default ({ Meteor, User, Request, RequestsCollection, FriendsCollection }
         /**
         * Remove the friendship connection between the user and the logged in user
         */
-        unfriend() {
-            const friend = FriendsCollection.findOne({ userId: Meteor.userId(), friendId: this._id });
+        async unfriend() {
+            const friend = await FriendsCollection.findOneAsync({ userId: Meteor.userId(), friendId: this._id });
 
             // if we have a friend record, remove it. FriendsCollection.after.remove will
             // take care of removing reverse friend connection for other user
-            friend && friend.remove();
+            friend && friend.removeAsync();
         },
 
         /**
@@ -39,8 +39,8 @@ export default ({ Meteor, User, Request, RequestsCollection, FriendsCollection }
         * @param   {String}  userId The user to check
         * @returns {Boolean} Whether the user is friends with the other
         */
-        isFriendsWith(userId = Meteor.userId()) {
-            return !!FriendsCollection.findOne({ userId: this._id, friendId: userId });
+        async isFriendsWith(userId = Meteor.userId()) {
+            return !!(await FriendsCollection.findOneAsync({ userId: this._id, friendId: userId }));
         },
         /**
         * Get the friend requests the user currently has
@@ -55,8 +55,8 @@ export default ({ Meteor, User, Request, RequestsCollection, FriendsCollection }
         * Retrieve the number of pending friend requests the user has
         * @returns {Number} The number of pending requests
         */
-        numFriendRequests() {
-            return this.friendRequests().count();
+        async numFriendRequests() {
+            return await this.friendRequests().countAsync();
         },
 
         /**
@@ -72,8 +72,8 @@ export default ({ Meteor, User, Request, RequestsCollection, FriendsCollection }
         * Retrieve the number of pending friend requests from this user to other users
         * @returns {Number} The number of pending requests
         */
-        numPendingFriendRequests() {
-            return this.pendingFriendRequests().count();
+        async numPendingFriendRequests() {
+            return await this.pendingFriendRequests().countAsync();
         },
 
         /**
@@ -81,8 +81,8 @@ export default ({ Meteor, User, Request, RequestsCollection, FriendsCollection }
         * @param   {Object}  user The user to check if there is a request from
         * @returns {Boolean} Whether or not there is a pending request
         */
-        hasFriendshipRequestFrom(user) {
-            const request = RequestsCollection.findOne({ ...this.getLinkObject(), type: 'friend', requesterId: user._id }, { fields: { _id: 1, deniedAt: 1 } });
+        async hasFriendshipRequestFrom(user) {
+            const request = await RequestsCollection.findOneAsync({ ...this.getLinkObject(), type: 'friend', requesterId: user._id }, { fields: { _id: 1, deniedAt: 1 } });
 
             if (request) {
                 const minDate = request.deniedAt && request.deniedAt.getTime() + (3600000 * 24 * User.restrictFrienshipRequestDays);
@@ -104,16 +104,16 @@ export default ({ Meteor, User, Request, RequestsCollection, FriendsCollection }
         /**
         * Cancel a friendship request that the current logged in user sent to the user
         */
-        cancelFriendshipRequest() {
-            const request = RequestsCollection.findOne({ ...this.getLinkObject(), type: 'friend', requesterId: Meteor.userId() });
+        async cancelFriendshipRequest() {
+            const request = await RequestsCollection.findOneAsync({ ...this.getLinkObject(), type: 'friend', requesterId: Meteor.userId() });
             request && request.cancel();
         },
 
         /**
         * Accept friendship request from the user
         */
-        acceptFriendshipRequest() {
-            const request = RequestsCollection.findOne({
+        async acceptFriendshipRequest() {
+            const request = await RequestsCollection.findOneAsync({
                 type: 'friend',
                 requesterId: this._id,
                 linkedObjectId: Meteor.userId(),
@@ -124,8 +124,8 @@ export default ({ Meteor, User, Request, RequestsCollection, FriendsCollection }
         /**
         * Deny friendship request from the user
         */
-        denyFriendshipRequest() {
-            const request = RequestsCollection.findOne({
+        async denyFriendshipRequest() {
+            const request = await RequestsCollection.findOneAsync({
                 type: 'friend',
                 requesterId: this._id,
                 linkedObjectId: Meteor.userId(),
@@ -136,8 +136,8 @@ export default ({ Meteor, User, Request, RequestsCollection, FriendsCollection }
         /**
         * Ignore friendship request from the user
         */
-        ignoreFriendshipRequest() {
-            const request = RequestsCollection.findOne({
+        async ignoreFriendshipRequest() {
+            const request = await RequestsCollection.findOneAsync({
                 type: 'friend',
                 requesterId: this._id,
                 linkedObjectId: Meteor.userId(),

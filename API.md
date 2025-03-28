@@ -7,7 +7,7 @@ To gain access the methods of a friend you must first have an instance of a frie
 Other methods for retaining information about friends or interacting with friends pertaining to the current user are also available on the User class and are detailed in the [User Extensions](#user-extensions) section of this document.
 
 ```javascript
-var request = Meteor.friends.findOne(); //instance of Request
+var request = Meteor.friends.findOneAsync(); //instance of Request
 
 var requests = Meteor.friends.find();  //cursor which returns Request instances
 ```
